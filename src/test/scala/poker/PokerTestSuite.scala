@@ -40,7 +40,6 @@ class PokerTestSuite extends FunSuite {
     assert(Poker.poker(List(fk, fh)) == List(fk))
     assert(Poker.poker(List(fh, fh)) == List(fh, fh))
     assert(Poker.poker(List(sf)) == List(sf))
-    assert(Poker.poker(List(fk, fh))
-      == List.iterate(fk, 100)(_ => fh))
+    assert(Poker.poker(List.iterate(fk, 100)(_ => fh)) == List(fk))
   }
 }

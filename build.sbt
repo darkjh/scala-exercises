@@ -1,6 +1,6 @@
 organization := "me.juhanlol"
 
-name := "design-of-program-scala"
+name := "scala-exercises"
 
 version := "0.1-SNAPSHOT"
 

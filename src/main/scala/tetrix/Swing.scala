@@ -40,11 +40,9 @@ object Main extends SimpleSwingApplication {
   val ui = new AbstractUI
 
   def onKeyPress(keyCode: Value) = keyCode match {
-    case Left  => ui.left()
-    case Right => ui.right()
-    case Up    => ui.up()
-    case Down  => ui.down()
-    case Space => ui.rotateCW()
+    case Left  => ui.left
+    case Right => ui.right
+    case Space => ui.rotateCW
     case _ =>
   }
 

@@ -15,6 +15,12 @@ case class GameView(blocks: Seq[Block],
                     gridSize: (Int, Int),
                     current: Seq[Block])
 
+case class GameState(blocks: Seq[Block],
+                     gridSize: (Int, Int),
+                     currentPiece: Piece) {
+  def view: GameView = GameView(blocks, gridSize, currentPiece.current)
+}
+
 case class Piece(pos: (Double, Double),
                  kind: PieceKind,
                  shape: Seq[(Double, Double)]) {
@@ -38,7 +44,6 @@ case class Piece(pos: (Double, Double),
       (x * c - y * s, x * s + y * c) } map roundToHalf)
   }
 }
-
 case object Piece {
   def apply(pos: (Double, Double), kind: PieceKind): Piece =
     kind match {

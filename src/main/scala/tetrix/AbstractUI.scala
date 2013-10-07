@@ -3,17 +3,15 @@ package tetrix
 /**
  */
 class AbstractUI {
-  private[this] val stage = new Stage((10, 20))
+  import Stage._
 
-  def left() = stage.moveLeft()
+  private[this] var state = Stage.newState(Nil)
 
-  def right() = stage.moveRight()
+  def left() = state = moveLeft(state)
 
-  def rotateCW() = stage.rotateClockWise()
+  def right() = state =  moveRight(state)
 
-  def up() {}
+  def rotateCW() = state = rotateClockWise(state)
 
-  def down() {}
-
-  def view: GameView = stage.view
+  def view: GameView = state.view
 }

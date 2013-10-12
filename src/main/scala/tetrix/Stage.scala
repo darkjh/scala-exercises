@@ -1,12 +1,6 @@
 package tetrix
 
 object Stage {
-  private[this] val size = (10, 20)
-  private[this] def dropOffPos = (size._1 / 2.0, size._2 - 3.0)
-//  private[this] var currentPiece = Piece(dropOffPos, TKind)
-//  private[this] var blocks = Block((0, 0), TKind) +: currentPiece.current
-//  def view: GameView = GameView(blocks, size, currentPiece.current)
-
   // Initial game state
   def newState(blocks: Seq[Block]): GameState = {
     val size = (10, 20)
@@ -23,20 +17,24 @@ object Stage {
     (s: GameState) => {
       val unloaded = unload(s.currentPiece, s.blocks)
       val moved = trans(s.currentPiece)
-      validate(moved) match {
-        case Some(p) =>
-          s.copy(blocks = load(moved, unloaded), currentPiece = moved)
+      val newState = s.copy(blocks = load(moved, unloaded), currentPiece = moved)
+      validate(newState) match {
+        case Some(ns) => ns
         case None => s // do nothing
       }
   }
 
-  private[this] def validate(p: Piece): Option[Piece] = {
+  private[this] def validate(s: GameState): Option[GameState] = {
+    val size = s.gridSize
+    val currentPos = s.currentPiece.current.map(_.pos)
+
     def inBounds(pos: (Int, Int)): Boolean = {
       pos._1 >= 0 && pos._1 < size._1 &&
         pos._2 >= 0 && pos._2 < size._2
     }
 
-    if (p.current.map(_.pos).forall(inBounds)) Some(p)
+    if (currentPos.forall(inBounds) &&
+      s.blocks.intersect(currentPos).isEmpty) Some(s)
     else None
   }
 

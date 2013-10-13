@@ -2,11 +2,13 @@ package tetrix
 
 import swing._
 import event._
+import javax.swing.AbstractAction
 
 object Main extends SimpleSwingApplication {
   import event.Key._
   import java.awt.{Dimension, Graphics2D, Graphics, Image, Rectangle}
   import java.awt.{Color => AWTColor}
+  import javax.swing.{Timer => SwingTimer, AbstractAction}
 
   val bluishGray = new AWTColor(48, 99, 99)
   val bluishLigherGray = new AWTColor(79, 130, 130)
@@ -35,6 +37,12 @@ object Main extends SimpleSwingApplication {
       g fillRect (0, 0, size.width, size.height)
       onPaint(g)
     }
+    val timer = new SwingTimer(100, new AbstractAction() {
+      def actionPerformed(e: java.awt.event.ActionEvent) {
+        repaint
+      }
+    })
+    timer.start
   }
 
   val ui = new AbstractUI
@@ -42,6 +50,7 @@ object Main extends SimpleSwingApplication {
   def onKeyPress(keyCode: Value) = keyCode match {
     case Left  => ui.left
     case Right => ui.right
+    case Down => ui.down
     case Space => ui.rotateCW
     case _ =>
   }
@@ -69,6 +78,7 @@ object Main extends SimpleSwingApplication {
       g setColor bluishSilver
       view.current foreach { b => g fill buildRect(b.pos) }
     }
+
     drawEmptyGrid
     drawBlocks
     drawCurrent

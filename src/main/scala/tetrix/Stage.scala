@@ -6,21 +6,34 @@ object Stage {
     val size = (10, 20)
     def dropOffPos = (size._1 / 2.0, size._2 - 3.0)
     val p = Piece(dropOffPos, TKind)
-    GameState(blocks ++ p.current, size, p)
+    GameState(blocks, size, p)
   }
 
-  def moveLeft = transformPiece(_.moveBy(-1.0, 0.0))
-  def moveRight = transformPiece(_.moveBy(1.0, 0.0))
-  def rotateClockWise = transformPiece(_.rotateBy(Math.PI / 2.0))
+  def moveLeft = transit(_.moveBy(-1.0, 0.0))
+  def moveRight = transit(_.moveBy(1.0, 0.0))
+  def rotateClockWise = transit(_.rotateBy(Math.PI / 2.0))
 
-  private[this] def transformPiece(trans: Piece => Piece): GameState => GameState =
+  // move down the current piece, if collision, spawn a new piece
+  val tick = transit(_.moveBy(0.0, -1.0), spawn)
+
+  private[this] def spawn(s: GameState): GameState = {
+    def dropOffPos = (s.gridSize._1 / 2.0, s.gridSize._2 - 3.0)
+    val p = Piece(dropOffPos, TKind)
+    // also add previous moving piece to the state's blocks
+    // the current piece is the newly spawned piece
+    s.copy(blocks = s.blocks ++ s.currentPiece.current,
+      currentPiece = p)
+  }
+
+  private[this] def transit(trans: Piece => Piece,
+                            onFail: GameState => GameState = identity
+                             ): GameState => GameState =
     (s: GameState) => {
-      val unloaded = unload(s.currentPiece, s.blocks)
       val moved = trans(s.currentPiece)
-      val newState = s.copy(blocks = load(moved, unloaded), currentPiece = moved)
+      val newState = s.copy(currentPiece = moved)
       validate(newState) match {
         case Some(ns) => ns
-        case None => s // do nothing
+        case None => onFail(s)
       }
   }
 
@@ -32,9 +45,10 @@ object Stage {
       pos._1 >= 0 && pos._1 < size._1 &&
         pos._2 >= 0 && pos._2 < size._2
     }
+    println(s.blocks)
 
     if (currentPos.forall(inBounds) &&
-      s.blocks.intersect(currentPos).isEmpty) Some(s)
+      s.blocks.map(_.pos).intersect(currentPos).isEmpty) Some(s)
     else None
   }
 

@@ -52,6 +52,7 @@ object Main extends SimpleSwingApplication {
     case Right => ui.right
     case Down => ui.down
     case Space => ui.rotateCW
+    case Up => ui.rotateCW
     case _ =>
   }
 

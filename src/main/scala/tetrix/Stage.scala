@@ -1,5 +1,7 @@
 package tetrix
 
+import scala.annotation.tailrec
+
 object Stage {
   // Initial game state
   def newState(blocks: Seq[Block]): GameState = {
@@ -13,17 +15,20 @@ object Stage {
   def moveRight = transit(_.moveBy(1.0, 0.0))
   def rotateClockWise = transit(_.rotateBy(Math.PI / 2.0))
 
-  // move down the current piece, if collision, spawn a new piece
-  val tick = transit(_.moveBy(0.0, -1.0), spawn)
+  // move down the current piece
+  // if collision, check rows to clear and then spawn a new piece
+  val tick = transit(_.moveBy(0.0, -1.0),
+    Function.chain(spawn :: clearFullRow :: Nil))
 
-  private[this] def spawn(s: GameState): GameState = {
-    def dropOffPos = (s.gridSize._1 / 2.0, s.gridSize._2 - 3.0)
-    val p = Piece(dropOffPos, TKind)
-    // also add previous moving piece to the state's blocks
-    // the current piece is the newly spawned piece
-    s.copy(blocks = s.blocks ++ s.currentPiece.current,
-      currentPiece = p)
-  }
+  private[this] lazy val spawn: GameState => GameState =
+    (s: GameState) => {
+      def dropOffPos = (s.gridSize._1 / 2.0, s.gridSize._2 - 3.0)
+      val p = Piece(dropOffPos, TKind)
+      // also add previous moving piece to the state's blocks
+      // the current piece is the newly spawned piece
+      s.copy(blocks = s.blocks ++ s.currentPiece.current,
+        currentPiece = p)
+    }
 
   private[this] def transit(trans: Piece => Piece,
                             onFail: GameState => GameState = identity
@@ -45,12 +50,33 @@ object Stage {
       pos._1 >= 0 && pos._1 < size._1 &&
         pos._2 >= 0 && pos._2 < size._2
     }
-    println(s.blocks)
 
     if (currentPos.forall(inBounds) &&
       s.blocks.map(_.pos).intersect(currentPos).isEmpty) Some(s)
     else None
   }
+
+  private[this] lazy val clearFullRow: GameState => GameState =
+    (s: GameState) => {
+      val highestRow = s.blocks.map(_.pos._2).max
+
+      def isFullRow(row: Int, s: GameState): Boolean = {
+        s.blocks.count(_.pos._2 == row) == s.gridSize._1
+      }
+
+      @tailrec def clearFullRows(row: Int, s: GameState): GameState =
+        if (row > highestRow) s
+        else if (!isFullRow(row, s)) clearFullRows(row + 1, s)
+        else {
+          val upper = s.blocks.filter(_.pos._2 > row)
+          val lower = s.blocks.filter(_.pos._2 < row)
+          val descended =
+            upper.map(b => b.copy(pos = (b.pos._1, b.pos._2 - 1)))
+          clearFullRows(row, s.copy(blocks = lower ++ descended))
+        }
+
+      clearFullRows(0, s)
+    }
 
   private[this] def unload(p: Piece, bs: Seq[Block]): Seq[Block] = {
     val currentPoss = p.current map {_.pos}

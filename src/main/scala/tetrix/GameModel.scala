@@ -1,6 +1,17 @@
 package tetrix
 
 sealed trait PieceKind
+case object PieceKind {
+  def apply(x: Int): PieceKind = x match {
+    case 0 => IKind
+    case 1 => JKind
+    case 2 => LKind
+    case 3 => OKind
+    case 4 => SKind
+    case 5 => TKind
+    case _ => ZKind
+  }
+}
 case object IKind extends PieceKind
 case object JKind extends PieceKind
 case object LKind extends PieceKind
@@ -17,7 +28,8 @@ case class GameView(blocks: Seq[Block],
 
 case class GameState(blocks: Seq[Block],
                      gridSize: (Int, Int),
-                     currentPiece: Piece) {
+                     currentPiece: Piece,
+                     kinds: Seq[PieceKind]) {
   def view: GameView = GameView(blocks, gridSize, currentPiece.current)
 }
 

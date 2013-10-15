@@ -8,7 +8,7 @@ object Stage {
     val size = (10, 20)
     def dropOffPos = (size._1 / 2.0, size._2 - 3.0)
     val p = Piece(dropOffPos, TKind)
-    GameState(blocks, size, p)
+    GameState(blocks, size, p, randomStream(new util.Random(0L)))
   }
 
   def moveLeft = transit(_.moveBy(-1.0, 0.0))
@@ -20,14 +20,17 @@ object Stage {
   val tick = transit(_.moveBy(0.0, -1.0),
     Function.chain(spawn :: clearFullRow :: Nil))
 
+  private[this] def randomStream(random: util.Random): Stream[PieceKind] =
+    PieceKind(random.nextInt % 7) #:: randomStream(random)
+
   private[this] lazy val spawn: GameState => GameState =
     (s: GameState) => {
       def dropOffPos = (s.gridSize._1 / 2.0, s.gridSize._2 - 3.0)
-      val p = Piece(dropOffPos, TKind)
+      val p = Piece(dropOffPos, s.kinds.head)
       // also add previous moving piece to the state's blocks
       // the current piece is the newly spawned piece
       s.copy(blocks = s.blocks ++ s.currentPiece.current,
-        currentPiece = p)
+        currentPiece = p, kinds = s.kinds.tail)
     }
 
   private[this] def transit(trans: Piece => Piece,

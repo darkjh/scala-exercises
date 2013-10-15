@@ -80,12 +80,4 @@ object Stage {
 
       clearFullRows(0, s)
     }
-
-  private[this] def unload(p: Piece, bs: Seq[Block]): Seq[Block] = {
-    val currentPoss = p.current map {_.pos}
-    bs filterNot { currentPoss contains _.pos  }
-  }
-
-  private[this] def load(p: Piece, bs: Seq[Block]): Seq[Block] =
-    bs ++ p.current
 }

@@ -11,7 +11,8 @@ object ScalaExerciseBuild extends Build {
     // dependencies
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % "1.9.2" % "test",
-      "org.scala-lang" % "scala-swing" % "2.10.2")
+      "org.scala-lang" % "scala-swing" % "2.10.2",
+      "com.typesafe.akka" %% "akka-actor" % "2.2.1")
   )
 
   lazy val project = Project("scala-exercises", file("."),

@@ -36,7 +36,7 @@ class AbstractUI {
   import ExecutionContext.Implicits.global
 
 
-  private[this] val initState = Stage.newState(Nil)
+  private[this] val initState = Stage.initState(Nil)
   private[this] val system = ActorSystem("TetrixSystem")
   private[this] val playerActor =
     system.actorOf(Props[StageActor](new StageActor(initState)),

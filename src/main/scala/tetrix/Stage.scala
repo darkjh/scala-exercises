@@ -4,7 +4,7 @@ import scala.annotation.tailrec
 
 object Stage {
   // Initial game state
-  def newState(blocks: Seq[Block]): GameState = {
+  def initState(blocks: Seq[Block]): GameState = {
     val size = (10, 20)
     def dropOffPos = (size._1 / 2.0, size._2 - 3.0)
     val p = Piece(dropOffPos, TKind)
@@ -29,8 +29,13 @@ object Stage {
       val p = Piece(dropOffPos, s.kinds.head)
       // also add previous moving piece to the state's blocks
       // the current piece is the newly spawned piece
-      s.copy(blocks = s.blocks ++ s.currentPiece.current,
+      val newState = s.copy(blocks = s.blocks ++ s.currentPiece.current,
         currentPiece = p, kinds = s.kinds.tail)
+
+      validate(newState) match {
+        case Some(ss) => ss
+        case None => initState(Nil)  // game over, restart
+      }
     }
 
   private[this] def transit(trans: Piece => Piece,

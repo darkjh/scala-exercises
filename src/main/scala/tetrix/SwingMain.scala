@@ -4,7 +4,7 @@ import swing._
 import event._
 import javax.swing.AbstractAction
 
-object Main extends SimpleSwingApplication {
+object SwingMain extends SimpleSwingApplication {
   import event.Key._
   import java.awt.{Dimension, Graphics2D, Graphics, Image, Rectangle}
   import java.awt.{Color => AWTColor}

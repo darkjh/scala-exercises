@@ -1,4 +1,4 @@
-package matrix
+package fp.matrix
 
 import java.util.concurrent.{Callable, Executors}
 

@@ -1,4 +1,4 @@
-package matrix
+package fp.matrix
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -22,11 +22,12 @@ class Matrix(private val repr: Array[Array[Double]]) {
 }
 
 object Matrix {
-
+  // implicit view here, usually used
   implicit def arrayToMatrix(array: Array[Array[Double]]): Matrix = {
     new Matrix(array)
   }
 
+  // This implicit
   implicit val strategy = SameThreadStrategy
 
   def multiply(a: Matrix, b: Matrix)

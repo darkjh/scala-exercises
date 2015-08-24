@@ -35,6 +35,26 @@ object Parallelism {
   def asyncF[A, B](f: A => B): A => Par[B] = {
     a => lazyUnit(f(a))
   }
+
+  def parMap[A, B](ps: List[A])(f: A => B): Par[List[B]] = fork {
+    val fbs: List[Par[B]] = ps.map(asyncF(f))
+    sequence(fbs)
+  }
+
+  def map[A, B](pa: Par[A])(f: A => B): Par[B] = combine(pa, unit())((a, _) => f(a))
+
+  def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = {
+    val pars = as.map(asyncF((a: A) => if (f(a)) List(a) else List()))
+    map(sequence(pars))(_.flatten)
+  }
+
+  // simple, sequential impl
+  def sequence[A](ps: List[Par[A]]): Par[List[A]] = {
+    ps.foldRight[Par[List[A]]](unit(List()))((h, t) => combine(h, t)(_ :: _ ))
+  }
+
+  // parallel version of `sequence`
+  def sequenceParallel[A](ps: List[Par[A]]): Par[List[A]] = ???
 }
 
 object ParTests extends App {

@@ -2,6 +2,7 @@ package poker
 
 import org.scalatest.FunSuite
 
+
 /**
  * Tests for poker program
  */

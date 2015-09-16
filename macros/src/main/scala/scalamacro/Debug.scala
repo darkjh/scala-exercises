@@ -5,10 +5,13 @@ import scala.language.experimental.macros
 
 
 object DebugMacroDefs {
-  def hello(): Unit = macro helloImpl
+  def debug(param: Any): Unit = macro debugImpl
 
-  def helloImpl(c: Context)(): c.Expr[Unit] = {
+  def debugImpl(c: Context)(param: c.Expr[Any]): c.Expr[Unit] = {
     import c.universe._
-    reify {println("Hello world!")}
+    val paramRep = show(param.tree)
+    val paramRepTree = Literal(Constant(paramRep))
+    val paramRepExpr = c.Expr[String](paramRepTree)
+    reify {println(paramRepExpr.splice + " = " + param.splice)}
   }
 }

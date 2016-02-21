@@ -60,6 +60,10 @@ object TypeClassExample extends App {
   // Works for strings
   assert(sum4(List("a", "b", "c")) == "abc")
 
+  // So far, we've generalized the `sum` function over the parameter type.
+  // It can be ints, strings or whatevet that that defines an implicit
+  // `monoid` operation.
+
   // 6. A type class for FoldLeft
   // The `Monoid` trait above is a type class, we can also generalize
   // foldLeft operation in its type class

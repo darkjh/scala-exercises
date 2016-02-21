@@ -14,7 +14,9 @@ object ScalaExerciseBuild extends Build {
       "org.scalatest" %% "scalatest" % "2.2.4" % "test",
       "org.scala-lang" % "scala-swing" % "2.11.0-M7",
       "com.typesafe.akka" %% "akka-actor" % "2.3.13",
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value)
+      "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+      "org.scalaz" %% "scalaz-core" % "7.2.0"
+    )
   )
 
   lazy val exercises = (project in file("exercises"))

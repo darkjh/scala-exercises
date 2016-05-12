@@ -15,7 +15,10 @@ object ScalaExerciseBuild extends Build {
       "org.scala-lang" % "scala-swing" % "2.11.0-M7",
       "com.typesafe.akka" %% "akka-actor" % "2.3.13",
       "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-      "org.scalaz" %% "scalaz-core" % "7.2.0"
+      "org.scalaz" %% "scalaz-core" % "7.2.0",
+      "com.chuusai" %% "shapeless" % "2.3.0",
+
+      "org.apache.spark" % "spark-sql_2.11" % "1.6.1"
     )
   )
 

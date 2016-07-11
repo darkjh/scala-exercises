@@ -17,6 +17,7 @@ object ScalaExerciseBuild extends Build {
       "org.scala-lang" % "scala-reflect" % scalaVersion.value,
       "org.scalaz" %% "scalaz-core" % "7.2.0",
       "com.chuusai" %% "shapeless" % "2.3.0",
+      "io.spray" %%  "spray-json" % "1.3.2",
 
       "org.apache.spark" % "spark-sql_2.11" % "1.6.1"
     )

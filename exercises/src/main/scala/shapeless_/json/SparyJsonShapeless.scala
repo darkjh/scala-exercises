@@ -10,6 +10,7 @@ object JsonFormat {
   def apply[T](implicit f: Lazy[JsonFormat[T]]): JsonFormat[T] = f.value
 }
 
+// TODO low priority
 object Formats extends DefaultJsonProtocol {
   implicit object HNilFormat extends JsonFormat[HNil] {
     override def read(json: JsValue): HNil = HNil
@@ -46,10 +47,7 @@ object Formats extends DefaultJsonProtocol {
   ): JsonFormat[T] = new JsonFormat[T] {
     val sg = lazySg.value
 
-    def read(j: JsValue): T = {
-      println("aaaa")
-      gen.from(sg.read(j))
-    }
+    def read(j: JsValue): T = gen.from(sg.read(j))
     def write(t: T): JsValue = sg.write(gen.to(t))
   }
 }
@@ -68,13 +66,11 @@ object JsonDemo extends App {
   }
 
   def fromJson[T: JsonFormat](s: String): T = {
-    val json = s.parseJson
-    val f = implicitly[JsonFormat[T]]
-    f.read(json)
+    s.parseJson.convertTo[T]
   }
 
   val expected = "{\"a\": \"hello\", \"b\": 13, \"c\": true}"
 
   println(toJson(Teapot("h", 15l, true)))
-  println(fromJson(expected))
+  println(fromJson[Teapot](expected))
 }
